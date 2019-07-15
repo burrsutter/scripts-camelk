@@ -1,0 +1,74 @@
+= Camel-K on Minikube 
+
+Following the numbers
+
+Watch out for 
+https://github.com/apache/camel-k/pull/740
+
+
+Hand edit KUBECONFIG
+
+----
+
+
+kubectl config use-context camelk
+
+
+kamel run hello.groovy -o yaml
+
+apiVersion: camel.apache.org/v1alpha1
+kind: Integration
+metadata:
+  creationTimestamp: null
+  name: feed
+  namespace: mycamel
+spec:
+  sources:
+  - content: |-
+      from('timer:tick?period=1s')
+        .setBody().constant('Burr Wuz Here')
+        .to('log:info')
+        .to('knative:channel/messages')
+    name: feed.groovy
+status: {}
+
+
+kamel run hello.groovy 
+
+kubectl get integrations
+
+stern hello
+
+kubectl delete integration hello
+
+kamel run Hello.java
+
+stern hello
+
+kubectl delete integration hello
+----
+
+=== Knative Serving
+
+kubectl apply --filename https://github.com/knative/serving/releases/download/v0.5.2/serving.yaml
+
+=== Knative Eventing
+
+kubectl apply --filename https://github.com/knative/eventing/releases/download/v0.5.0/release.yaml 
+
+kubectl apply --filename https://github.com/knative/eventing-sources/releases/download/v0.5.0/eventing-sources.yaml 
+
+kubectl apply --filename https://raw.githubusercontent.com/knative/serving/v0.5.2/third_party/config/build/clusterrole.yaml
+
+
+=== Camel-K + Knative
+
+----
+cd knative_camel
+
+kubectl apply -f messages-channel.yaml
+
+kubectl apply -f words-channel.yaml
+
+
+----
