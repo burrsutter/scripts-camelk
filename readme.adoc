@@ -103,7 +103,7 @@ wait for operator to come to life
 
 kubectl describe integrationplatform/camel-k
 
-kamel run hello/hello.groovy 
+kamel run hello/hello.groovy --trait gc.enabled=false 
 
 kubectl get integrations
 
